@@ -1,0 +1,11 @@
+version: '3'
+services:
+  flask_app:
+    build: .
+    ports:
+      - "9090:9090"
+    environment:
+      - FLASK_ENV=development
+    volumes:
+      - .:/app
+    command: flask run --host=0.0.0.0 --port=9090
