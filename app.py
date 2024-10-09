@@ -2,33 +2,31 @@ from flask import Flask, session, request, render_template_string, abort
 import re
 
 app = Flask(__name__)
-app.secret_key = 'world1'  # المفتاح السري لتشفير الجلسات
+app.secret_key = 'world1'  
 
-# دالة تعقيم الاسم المدخل: السماح فقط بالأحرف الأبجدية والأرقام و - و .
+
 def sanitize_username(username):
-    # التحقق إذا كان الاسم المدخل يحتوي على أحرف غير مسموح بها
     if re.search(r'[^a-zA-Z0-9\-\.\_]', username):
-        abort(403)  # إذا كانت المدخلات غير صالحة، يتم رفض الوصول
+        abort(403)  
 
     return username
 
 @app.route('/')
 def main():
-    # الحصول على الكوكيز (أو تعيين 'guest' إذا لم توجد)
+
     username = request.cookies.get('session', 'guest')
 
-    # تعقيم المدخل (اسم المستخدم)
+
     sanitized_username = sanitize_username(username)
 
-    # إذا كان المستخدم غير موجود في الجلسة
+
     if 'username' not in session:
         session['username'] = sanitized_username if sanitized_username else 'guest'
 
-    # إذا كانت الجلسة تشير إلى 'guest'، يتم رفض الوصول
+
     if session['username'] == 'guest':
         abort(403)
 
-    # قالب HTML لعرض رسالة الترحيب
     template = f'''
     <html>
         <head></head>
@@ -43,7 +41,7 @@ def main():
 
 @app.errorhandler(403)
 def unauthorized(error):
-    # رسالة الخطأ إذا كان المستخدم غير مصرح له
+
     return '''
     <html>
     <head>
